@@ -21,6 +21,11 @@ jobs:
     - name: Set up Gradle
       uses: gradle/gradle-build-action@v2
 
+    - name: Set up Konan cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.konan/cache
+
     - name: Build & Publish to Maven Central
       env:
         MAVEN_URL: ${{ secrets.MAVEN_URL }}

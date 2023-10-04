@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 plugins {
     kotlin("multiplatform") version "1.9.10"
     id("org.jetbrains.dokka") version "1.9.0"
+    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     `maven-publish`
     signing
 }
@@ -63,23 +64,6 @@ signing {
 }
 
 publishing {
-    if (System.getenv("MAVEN_URL") != null) {
-        repositories {
-            maven(System.getenv("MAVEN_URL")!!) {
-                if (System.getenv("MAVEN_USER") != null) {
-                    credentials {
-                        username = System.getenv("MAVEN_USER")
-                        password = System.getenv("MAVEN_PASS")
-                    }
-                }
-            }
-        }
-    } else {
-        repositories {
-            mavenLocal()
-        }
-    }
-
     publications {
         withType<MavenPublication> {
             artifact(dokkaJar) {
@@ -113,6 +97,19 @@ publishing {
                     developerConnection = connection.get().replace("git://", "ssh://")
                     url = this@pom.url
                 }
+            }
+        }
+    }
+}
+
+if ("oss.sonatype.org" in (System.getenv("MAVEN_URL") ?: "")) {
+    nexusPublishing {
+        this.repositories {
+            sonatype {
+                username = System.getenv("MAVEN_USER")
+                password = System.getenv("MAVEN_PASS")
+
+                nexusUrl = uri(System.getenv("MAVEN_URL"))
             }
         }
     }
