@@ -26,11 +26,11 @@ jobs:
         MAVEN_URL: ${{ secrets.MAVEN_URL }}
         MAVEN_USER: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASS: ${{ secrets.OSSRH_PASSWORD }}
+        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        SIGNING_PASS: ${{ secrets.SIGNING_PASSWORD }}
       run: |
         ./gradlew
-        -PsigningKey=${{ secrets.SIGNING_KEY }}
-        -PsigningPassword=${{ secrets.SIGNING_PASSWORD }}
-        build publish
+        build publish 
 
     - name: Get current version
       id: get_version
