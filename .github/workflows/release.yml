@@ -16,6 +16,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '17'
+        distribution: 'temurin'
 
     - name: Set up Gradle
       uses: gradle/gradle-build-action@v2
@@ -30,7 +31,7 @@ jobs:
         -PsigningKey=${{ secrets.SIGNING_KEY }}
         -PsigningPassword=${{ secrets.SIGNING_PASSWORD }}
         build publish
-    
+
     - name: Get current version
       id: get_version
       run: |
