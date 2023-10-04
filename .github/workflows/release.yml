@@ -29,8 +29,7 @@ jobs:
         SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         SIGNING_PASS: ${{ secrets.SIGNING_PASSWORD }}
       run: |
-        ./gradlew
-        build publish 
+        ./gradlew build publish 
 
     - name: Get current version
       id: get_version
