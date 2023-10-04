@@ -22,7 +22,11 @@ kotlin {
     }
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasm()
+    wasm {
+        nodejs()
+        browser()
+        d8()
+    }
 
     androidNativeArm32()
     androidNativeArm64()
