@@ -21,10 +21,11 @@ jobs:
     - name: Set up Gradle
       uses: gradle/gradle-build-action@v2
 
-    - name: Set up Konan cache
+    - name: Set up Konan (KT/Native) cache
       uses: actions/cache@v2
       with:
         path: ~/.konan/cache
+        key: ${{ runner.os }}-konan
 
     - name: Build & Publish to Maven Central
       env:
