@@ -7,6 +7,8 @@ jobs:
   build:
     # needs to be run on a macos machine because of KT/Native apple targets
     runs-on: macos-latest
+    permissions: 
+      contents: write # for automatic tag creation
 
     steps:
     - name: Checkout code
