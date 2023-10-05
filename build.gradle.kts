@@ -63,6 +63,13 @@ signing {
     }
 }
 
+// why must they make me suffer this way
+tasks {
+    withType<PublishToMavenRepository> {
+        mustRunAfter(withType<Sign>())
+    }
+}
+
 publishing {
     publications {
         withType<MavenPublication> {
