@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       incomplete:
-        description: Skip the actual building & publishing for testing purposes?
+        description: Skip publishing for testing purposes?
         type: boolean
         default: false
 
@@ -54,7 +54,7 @@ jobs:
         ./gradlew build
 
     - name: Publish to Maven Central
-      if: !github.event.inputs.incomplete
+      if: github.event.inputs.incomplete == false
       env:
         MAVEN_URL: ${{ secrets.MAVEN_URL }}
         MAVEN_USER: ${{ secrets.OSSRH_USERNAME }}
@@ -65,7 +65,7 @@ jobs:
         ./gradlew publish 
 
     - name: Add GitHub tag
-      if: github.ref == 'refs/heads/main' && !github.event.inputs.incomplete
+      if: github.ref == 'refs/heads/main' && github.event.inputs.incomplete == false
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -74,7 +74,7 @@ jobs:
         draft: false
 
     - name: Close staging repository # If everything succeeds, auto-publish to Maven Central
-      if: success() && !github.event.inputs.incomplete
+      if: success() && github.event.inputs.incomplete == false
       env:
         MAVEN_URL: ${{ secrets.MAVEN_URL }}
         MAVEN_USER: ${{ secrets.OSSRH_USERNAME }}
