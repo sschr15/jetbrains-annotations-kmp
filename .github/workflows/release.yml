@@ -35,7 +35,7 @@ jobs:
         MAVEN_USER: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASS: ${{ secrets.OSSRH_PASSWORD }}
         SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-        SIGNING_PASS: ${{ secrets.SIGNING_PASSWORD }}
+        SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
       run: |
         ./gradlew build publish 
 
@@ -53,3 +53,8 @@ jobs:
         automatic_release_tag: ${{ steps.get_version.outputs.JB_VERSION }}
         prerelease: false
         draft: false
+
+    - name: Close staging repository # If everything succeeds, auto-publish to Maven Central
+      if: success()
+      run: |
+        ./gradlew closeAndReleaseRepository
