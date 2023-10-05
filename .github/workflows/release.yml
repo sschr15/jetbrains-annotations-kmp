@@ -2,6 +2,11 @@ name: Build and Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      incomplete:
+        description: Skip the actual building & publishing for testing purposes?
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -23,13 +28,33 @@ jobs:
     - name: Set up Gradle
       uses: gradle/gradle-build-action@v2
 
+    - name: Get JB Annotations version
+      id: get_version
+      run: |
+        ./gradlew properties -q | grep "version:" | awk '{print $2}' > version.txt
+        echo JB_VERSION=$(cat version.txt) >> $GITHUB_OUTPUT
+
+    - name: Get Kotlin version
+      id: get_kotlin_version
+      run: |
+        ./gradlew properties -q | grep kotlin\\.plugin\\.loaded\\.in\\.projects\\. \
+          | cut -d'.' -f6- \
+          | cut -d':' -f1 > kotlin_version.txt
+        echo KOTLIN_VERSION=$(cat kotlin_version.txt) >> $GITHUB_OUTPUT
+
     - name: Set up Konan (KT/Native) cache
       uses: actions/cache@v2
       with:
-        path: ~/.konan/cache
-        key: ${{ runner.os }}-konan
+        path: ~/.konan
+        # invalidate cache when Kotlin version changes
+        key: ${{ runner.os }}-konan-${{ steps.get_kotlin_version.outputs.KOTLIN_VERSION }}
 
-    - name: Build & Publish to Maven Central
+    - name: Build
+      run: |
+        ./gradlew build
+
+    - name: Publish to Maven Central
+      if: !github.event.inputs.incomplete
       env:
         MAVEN_URL: ${{ secrets.MAVEN_URL }}
         MAVEN_USER: ${{ secrets.OSSRH_USERNAME }}
@@ -37,16 +62,10 @@ jobs:
         SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
       run: |
-        ./gradlew build publish 
-
-    - name: Get current version
-      id: get_version
-      run: |
-        ./gradlew properties -q | grep "version:" | awk '{print $2}' > version.txt
-        echo JB_VERSION=$(cat version.txt) >> $GITHUB_OUTPUT
+        ./gradlew publish 
 
     - name: Add GitHub tag
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main' && !github.event.inputs.incomplete
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -55,6 +74,17 @@ jobs:
         draft: false
 
     - name: Close staging repository # If everything succeeds, auto-publish to Maven Central
-      if: success()
+      if: success() && !github.event.inputs.incomplete
+      env:
+        MAVEN_URL: ${{ secrets.MAVEN_URL }}
+        MAVEN_USER: ${{ secrets.OSSRH_USERNAME }}
+        MAVEN_PASS: ${{ secrets.OSSRH_PASSWORD }}
       run: |
         ./gradlew closeAndReleaseRepository
+
+    - name: Echo computed values
+      if: github.event.inputs.incomplete
+      run: |
+        echo "Computed values:"
+        echo "JB_VERSION=${{ steps.get_version.outputs.JB_VERSION }}"
+        echo "KOTLIN_VERSION=${{ steps.get_kotlin_version.outputs.KOTLIN_VERSION }}"
