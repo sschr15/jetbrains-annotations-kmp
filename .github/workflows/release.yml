@@ -2,11 +2,6 @@ name: Build and Publish
 
 on:
   workflow_dispatch:
-    inputs:
-      incomplete:
-        description: Skip publishing for testing purposes?
-        type: boolean
-        default: false
 
 jobs:
   build:
@@ -54,7 +49,6 @@ jobs:
         ./gradlew build
 
     - name: Publish to Maven Central
-      if: github.event.inputs.incomplete == false
       env:
         MAVEN_URL: ${{ secrets.MAVEN_URL }}
         MAVEN_USER: ${{ secrets.OSSRH_USERNAME }}
@@ -65,7 +59,7 @@ jobs:
         ./gradlew publish 
 
     - name: Add GitHub tag
-      if: github.ref == 'refs/heads/main' && github.event.inputs.incomplete == false
+      if: github.ref == 'refs/heads/main'
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -74,17 +68,10 @@ jobs:
         draft: false
 
     - name: Close staging repository # If everything succeeds, auto-publish to Maven Central
-      if: success() && github.event.inputs.incomplete == false
+      if: success()
       env:
         MAVEN_URL: ${{ secrets.MAVEN_URL }}
         MAVEN_USER: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASS: ${{ secrets.OSSRH_PASSWORD }}
       run: |
         ./gradlew closeAndReleaseRepository
-
-    - name: Echo computed values
-      if: github.event.inputs.incomplete
-      run: |
-        echo "Computed values:"
-        echo "JB_VERSION=${{ steps.get_version.outputs.JB_VERSION }}"
-        echo "KOTLIN_VERSION=${{ steps.get_kotlin_version.outputs.KOTLIN_VERSION }}"
