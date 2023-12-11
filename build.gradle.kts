@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
-    kotlin("multiplatform") version "1.9.10"
+    kotlin("multiplatform") version "1.9.21"
     id("org.jetbrains.dokka") version "1.9.0"
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     `maven-publish`
     signing
 }
 
-version = "24.0.1"
+version = "24.1.0"
 group = "com.sschr15.annotations"
 
 repositories {
@@ -16,6 +16,8 @@ repositories {
 }
 
 kotlin {
+    applyDefaultHierarchyTemplate()
+
     jvm()
     js {
         nodejs()
@@ -23,10 +25,15 @@ kotlin {
     }
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasm {
+    wasmJs {
         nodejs()
         browser()
         d8()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        nodejs()
     }
 
     androidNativeArm32()
@@ -39,9 +46,8 @@ kotlin {
 
     mingwX64()
 
-    ios()
-    tvos()
-    watchos()
+    iosX64()
+    iosArm64()
     macosX64()
     macosArm64()
     iosSimulatorArm64()

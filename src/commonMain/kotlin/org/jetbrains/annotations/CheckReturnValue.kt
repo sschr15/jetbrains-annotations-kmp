@@ -33,5 +33,4 @@ package org.jetbrains.annotations
     AnnotationTarget.CLASS,
     AnnotationTarget.FILE
 )
-@ApiStatus.Experimental
 annotation class CheckReturnValue

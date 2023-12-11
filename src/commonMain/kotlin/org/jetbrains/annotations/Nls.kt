@@ -17,7 +17,7 @@
 package org.jetbrains.annotations
 
 /**
- * Specifies that an element of the program is an user-visible string which needs to be localized.
+ * Specifies that an element of the program is a user-visible string which needs to be localized.
  * This annotation is intended to be used by localization tools for
  * detecting strings which should be reported as requiring localization.
  *
