@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
-    kotlin("multiplatform") version "1.9.21"
-    id("org.jetbrains.dokka") version "1.9.0"
+    kotlin("multiplatform") version "2.0.0"
+    id("org.jetbrains.dokka") version "1.9.20"
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     `maven-publish`
     signing
 }
 
-version = "24.1.0"
+version = "24.1.0+apple"
 group = "com.sschr15.annotations"
 
 repositories {
@@ -50,9 +50,16 @@ kotlin {
     iosArm64()
     macosX64()
     macosArm64()
+    tvosX64()
+    tvosArm64()
+    watchosX64()
+    watchosArm32()
+    watchosArm64()
+    watchosX64()
     iosSimulatorArm64()
     tvosSimulatorArm64()
     watchosSimulatorArm64()
+    watchosDeviceArm64()
 }
 
 val dokkaJar = tasks.create<Jar>("dokkaJar") {
