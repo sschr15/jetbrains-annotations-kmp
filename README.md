@@ -8,7 +8,9 @@ converted in-place (mostly) by the Jetbrains kotlin IDEA plugin's "Convert Java 
 ## Usage
 
 This is published to Maven Central as `com.sschr15.annotations:jb-annotations-kmp:<version>`.
-It is available for every non-deprecated KMP target.
+It is meant to be available for every non-deprecated KMP target (links to [non-native](https://kotlinlang.org/docs/multiplatform-dsl-reference.html#targets) and [native](https://kotlinlang.org/docs/native-target-support.html) targets). If any are missing, go ahead and [create an issue](https://github.com/sschr15/jetbrains-annotations-kmp/issues/new) to let me know.
+
+Versioning matches that of the upstream annotations, with any rebuilds having specific `+something` information added.
 
 The latest version (matching that of the original library) is shown on the right as the latest GitHub release.
 The first version ported is `24.0.1`.
@@ -29,11 +31,9 @@ Using Kotlin-style Gradle:
 
 ```kotlin
 kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation("com.sschr15.annotations:jb-annotations-kmp:$VERSION")
-            }
+    sourceSets["commonMain"] {
+        dependencies {
+            implementation("com.sschr15.annotations:jb-annotations-kmp:$VERSION")
         }
     }
 }
