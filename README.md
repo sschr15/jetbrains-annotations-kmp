@@ -1,3 +1,11 @@
+# [Jetbrains Annotations](https://github.com/JetBrains/java-annotations) now officially supports Kotlin Multiplatform
+
+Using the normal Maven coordinates for Jetbrains' official annotations will work in KMP now.
+
+Old readme for history:
+
+---
+
 # Jetbrains Annotations - Kotlin Multiplatform
 
 A copy of Jetbrains' [java-annotations](https://github.com/jetbrains/java-annotations) library,
